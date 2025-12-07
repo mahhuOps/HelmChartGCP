@@ -2,7 +2,7 @@ apiVersion: k8s.nginx.org/v1
 kind: VirtualServer
 metadata:
   name: {{ include "todoapp.fullname" . }}-vs
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ $.Values.Namespace }}
   labels:
     app: {{ include "todoapp.fullname" . }}
 
@@ -38,7 +38,7 @@ spec:
     {{- range .Values.apps.api.services }}
     - name: {{ .name }}
       service: {{ .name }}
-      namespace: {{ .Values.Namespace }}
+      namespace: {{ $.Values.Namespace }}
       port: 80
     {{- end }}
     {{- end }}
@@ -48,7 +48,7 @@ spec:
     {{- range .Values.apps.ui.services }}
     - name: {{ .name }}
       service: {{ .name }}
-      namespace: {{ .Values.Namespace }}
+      namespace: {{ $.Values.Namespace }}
       port: 80
     {{- end }}
     {{- end }}

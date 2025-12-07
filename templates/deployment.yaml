@@ -5,7 +5,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .name }}
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ $.Values.Namespace }}
   labels:
     app: {{ .name }}
 spec:
@@ -38,7 +38,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .name }}
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ $.Values.Namespace }}
   labels:
     app: {{ .name }}
     ui-config-theme: {{ $.Values.apps.ui.config.theme | quote }}
