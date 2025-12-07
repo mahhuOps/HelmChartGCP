@@ -5,6 +5,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .name }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: {{ .name }}
 spec:
@@ -26,6 +27,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .name }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: {{ .name }}
     ui-theme: {{ $.Values.apps.ui.config.theme | quote }}

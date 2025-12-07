@@ -2,40 +2,53 @@ apiVersion: k8s.nginx.org/v1
 kind: VirtualServer
 metadata:
   name: {{ include "todoapp.fullname" . }}-vs
+  namespace: {{ .Values.Namespace }}
   labels:
     app: {{ include "todoapp.fullname" . }}
+
 spec:
   host: {{ .Values.virtualServer.host }}
   tls:
     secret: {{ .Values.virtualServer.tlsSecret | default "tls-secret" | quote }}
+
   routes:
     {{/* -------- API ROUTES -------- */}}
+    {{- if and .Values.apps .Values.apps.api .Values.apps.api.services }}
     {{- range .Values.apps.api.services }}
     - path: {{ .path }}
       route:
         action:
           pass: {{ .name }}
     {{- end }}
+    {{- end }}
 
     {{/* -------- UI ROUTES -------- */}}
-    {{- range $.Values.apps.ui.services }}
+    {{- if and .Values.apps .Values.apps.ui .Values.apps.ui.services }}
+    {{- range .Values.apps.ui.services }}
     - path: {{ .path }}
       route:
         action:
           pass: {{ .name }}
+    {{- end }}
     {{- end }}
 
   upstreams:
     {{/* -------- API UPSTREAMS -------- */}}
+    {{- if and .Values.apps .Values.apps.api .Values.apps.api.services }}
     {{- range .Values.apps.api.services }}
     - name: {{ .name }}
       service: {{ .name }}
+      namespace: {{ .Values.Namespace }}
       port: 80
+    {{- end }}
     {{- end }}
 
     {{/* -------- UI UPSTREAMS -------- */}}
-    {{- range $.Values.apps.ui.services }}
+    {{- if and .Values.apps .Values.apps.ui .Values.apps.ui.services }}
+    {{- range .Values.apps.ui.services }}
     - name: {{ .name }}
       service: {{ .name }}
+      namespace: {{ .Values.Namespace }}
       port: 80
+    {{- end }}
     {{- end }}

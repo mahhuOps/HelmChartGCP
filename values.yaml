@@ -2,6 +2,8 @@
 virtualServer:
   host: "todo.mahhu.io.vn"
 
+Namespace: 'todo'
+
 imagePullSecrets:
   - name: regcred
 
