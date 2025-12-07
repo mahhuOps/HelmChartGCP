@@ -1,4 +1,5 @@
 {{/* ---------------- API SERVICES ---------------- */}}
+{{- if and $.Values.apps .Values.apps.api }}
 {{- range .Values.apps.api.services }}
 ---
 apiVersion: apps/v1
@@ -29,9 +30,11 @@ spec:
           ports:
             - containerPort: 80
 {{- end }}
+{{- end }}
 
 
 {{/* ---------------- UI SERVICES ---------------- */}}
+{{- if and $.Values.apps .Values.apps.ui }}
 {{- range $.Values.apps.ui.services }}
 ---
 apiVersion: apps/v1
@@ -69,4 +72,4 @@ spec:
           ports:
             - containerPort: 80
 {{- end }}
- 
+{{- end }}
