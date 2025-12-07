@@ -1,5 +1,5 @@
 {{/* ---------------- API SERVICES ---------------- */}}
-{{- range .Values.apps.api.services }}
+{{- range $.Values.apps.api.services }}
 ---
 apiVersion: v1
 kind: Service
