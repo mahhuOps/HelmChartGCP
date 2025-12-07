@@ -1,4 +1,5 @@
 {{/* ---------------- API SERVICES ---------------- */}}
+{{- if and $.Values.apps .Values.apps.api }}
 {{- range $.Values.apps.api.services }}
 ---
 apiVersion: v1
@@ -18,9 +19,11 @@ spec:
   selector:
     app: {{ .name }}
 {{- end }}
+{{- end }}
 
 
 {{/* ---------------- UI SERVICES ---------------- */}}
+{{- if and $.Values.apps .Values.apps.ui }}
 {{- range $.Values.apps.ui.services }}
 ---
 apiVersion: v1
@@ -40,4 +43,5 @@ spec:
       name: http
   selector:
     app: {{ .name }}
+{{- end }}
 {{- end }}
