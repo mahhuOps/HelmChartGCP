@@ -1,0 +1,41 @@
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: {{ include "todoapp.fullname" . }}-vs
+  labels:
+    app: {{ include "todoapp.fullname" . }}
+spec:
+  host: {{ .Values.virtualServer.host }}
+  tls:
+    secret: {{ .Values.virtualServer.tlsSecret | default "tls-secret" | quote }}
+  routes:
+    {{/* -------- API ROUTES -------- */}}
+    {{- range .Values.apps.api.services }}
+    - path: {{ .path }}
+      route:
+        action:
+          pass: {{ .name }}
+    {{- end }}
+
+    {{/* -------- UI ROUTES -------- */}}
+    {{- range $.Values.apps.ui.services }}
+    - path: {{ .path }}
+      route:
+        action:
+          pass: {{ .name }}
+    {{- end }}
+
+  upstreams:
+    {{/* -------- API UPSTREAMS -------- */}}
+    {{- range .Values.apps.api.services }}
+    - name: {{ .name }}
+      service: {{ .name }}
+      port: 80
+    {{- end }}
+
+    {{/* -------- UI UPSTREAMS -------- */}}
+    {{- range $.Values.apps.ui.services }}
+    - name: {{ .name }}
+      service: {{ .name }}
+      port: 80
+    {{- end }}

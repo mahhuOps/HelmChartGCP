@@ -1,0 +1,19 @@
+# Host cho VirtualServer
+virtualServer:
+  host: "todo.mahhu.io.vn"
+
+imagePullSecrets:
+  - name: regcred
+
+apps:
+  ui:
+    config:
+      theme: dark
+      enableTracking: true
+
+    services:
+      - name: todo-ui
+        image: "harbor.mahhu.io.vn/todo/todo-app-ui"
+        tag: "90"
+        replicaCount: 1
+        path: "/"

@@ -1,0 +1,70 @@
+{{/* ---------------- API SERVICES ---------------- */}}
+{{- range .Values.apps.api.services }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image }}:{{ .tag }}"
+          ports:
+            - containerPort: 80
+{{- end }}
+
+
+{{/* ---------------- UI SERVICES ---------------- */}}
+{{- range $.Values.apps.ui.services }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+    ui-config-theme: {{ $.Values.apps.ui.config.theme | quote }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+        ui-theme: {{ $.Values.apps.ui.config.theme | quote }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image }}:{{ .tag }}"
+          env:
+            - name: UI_THEME
+              value: {{ $.Values.apps.ui.config.theme | quote }}
+            - name: UI_TRACKING_ENABLED
+              value: {{ $.Values.apps.ui.config.enableTracking | quote }}
+          ports:
+            - containerPort: 80
+{{- end }}
+ 
