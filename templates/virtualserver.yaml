@@ -8,17 +8,13 @@ metadata:
 
 spec:
   host: {{ .Values.virtualServer.host }}
-  tls:
-    secret: {{ .Values.virtualServer.tlsSecret | default "tls-secret" | quote }}
 
   routes:
     {{/* -------- API ROUTES -------- */}}
     {{- if and .Values.apps .Values.apps.api .Values.apps.api.services }}
     {{- range .Values.apps.api.services }}
     - path: {{ .path }}
-      route:
-        action:
-          pass: {{ .name }}
+      route: {{ .name }}   # chỉ dùng tên upstream
     {{- end }}
     {{- end }}
 
@@ -26,9 +22,7 @@ spec:
     {{- if and .Values.apps .Values.apps.ui .Values.apps.ui.services }}
     {{- range .Values.apps.ui.services }}
     - path: {{ .path }}
-      route:
-        action:
-          pass: {{ .name }}
+      route: {{ .name }}   # chỉ dùng tên upstream
     {{- end }}
     {{- end }}
 
