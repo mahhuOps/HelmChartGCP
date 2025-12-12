@@ -1,6 +1,8 @@
 apiVersion: k8s.nginx.org/v1
 kind: VirtualServer
 metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: todoapp:k8s.nginx.org/VirtualServer:todo/{{ include "todoapp.fullname" . }}-vs
   name: {{ include "todoapp.fullname" . }}-vs
   namespace: {{ $.Values.Namespace }}
   labels:
@@ -14,15 +16,21 @@ spec:
     {{- if and .Values.apps .Values.apps.api .Values.apps.api.services }}
     {{- range .Values.apps.api.services }}
     - path: {{ .path }}
-      route: {{ .name }}   # chỉ dùng tên upstream
+      action:
+        proxy:
+          upstream: {{ .name }}
+          rewritePath: /
     {{- end }}
     {{- end }}
 
     {{/* -------- UI ROUTES -------- */}}
     {{- if and .Values.apps .Values.apps.ui .Values.apps.ui.services }}
     {{- range .Values.apps.ui.services }}
-    - path: {{ .path }}
-      route: {{ .name }}   # chỉ dùng tên upstream
+    - action:	
+        proxy:	
+          rewritePath: /	
+          upstream: {{ .name }}
+      path: {{ .path }}
     {{- end }}
     {{- end }}
 
@@ -32,7 +40,6 @@ spec:
     {{- range .Values.apps.api.services }}
     - name: {{ .name }}
       service: {{ .name }}
-      namespace: {{ $.Values.Namespace }}
       port: 80
     {{- end }}
     {{- end }}
@@ -42,7 +49,6 @@ spec:
     {{- range .Values.apps.ui.services }}
     - name: {{ .name }}
       service: {{ .name }}
-      namespace: {{ $.Values.Namespace }}
       port: 80
     {{- end }}
     {{- end }}
